@@ -9,6 +9,7 @@ import uploadConfig from '../config/upload';
 import CreateTransactionService from './CreateTransactionService';
 import Transaction from '../models/Transaction';
 import TransactionRepository from '../repositories/TransactionsRepository';
+import handleWait from '../utils/handleAwait';
 
 interface Request {
   filename: string;
@@ -32,7 +33,7 @@ class ImportTransactionsService {
 
     const formattedTransactions = JSON.parse(
       JSON.stringify(transactions).replace(/\s(?=\w+":)/g, ''),
-    );
+    ) as RequestTransaction[];
 
     const newTrasactions: Transaction[] = [];
     for (const transaction of formattedTransactions) {
@@ -44,22 +45,6 @@ class ImportTransactionsService {
       });
       newTrasactions.push(newTrasaction);
     }
-
-    // const newTrasactions = await Promise.all(
-    //   transactions.map(async transaction => {
-    //     console.log('COMEÇOU');
-    //     const newTrasaction = await createTransactionService.execute({
-    //       title: transaction.title,
-    //       type: transaction.type,
-    //       value: Number(transaction.value),
-    //       category: transaction.category,
-    //     });
-
-    //     console.log(newTrasaction);
-    //     console.log('FINALIZOU');
-    //     return newTrasaction;
-    //   }),
-    // );
 
     return newTrasactions;
   }

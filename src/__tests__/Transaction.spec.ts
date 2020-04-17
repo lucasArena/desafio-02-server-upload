@@ -199,13 +199,9 @@ describe('Transaction', () => {
 
     await request(app).post('/transactions/import').attach('file', importCSV);
 
-    const transactions = await transactionsRepository.find({
-      select: ['title', 'type'],
-    });
+    const transactions = await transactionsRepository.find();
 
-    const categories = await categoriesRepository.find({
-      select: ['title'],
-    });
+    const categories = await categoriesRepository.find();
 
     expect(categories).toHaveLength(2);
     expect(categories).toEqual(
