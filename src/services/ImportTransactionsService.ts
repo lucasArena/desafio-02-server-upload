@@ -35,18 +35,19 @@ class ImportTransactionsService {
       JSON.stringify(transactions).replace(/\s(?=\w+":)/g, ''),
     ) as RequestTransaction[];
 
-    const newTrasactions: Transaction[] = [];
-    for (const transaction of formattedTransactions) {
-      const newTrasaction = await createTransactionService.execute({
-        title: transaction.title,
-        type: transaction.type,
-        value: Number(transaction.value),
-        category: transaction.category,
-      });
-      newTrasactions.push(newTrasaction);
-    }
+    const createdTransactions = await Promise.all(
+      formattedTransactions.map(async transaction => {
+        const createdTransaction = await createTransactionService.execute({
+          title: transaction.title,
+          type: transaction.type,
+          value: Number(transaction.value),
+          category: transaction.category,
+        });
+        return createdTransaction;
+      }),
+    );
 
-    return newTrasactions;
+    return createdTransactions;
   }
 }
 
